@@ -16,6 +16,10 @@ export default function LoadingScreen() {
   const scaleAnim = useRef(new Animated.Value(0.8)).current;
   const rotateAnim = useRef(new Animated.Value(0)).current;
   const pulseAnim = useRef(new Animated.Value(1)).current;
+  const slideUpAnim = useRef(new Animated.Value(50)).current;
+  const progressAnim = useRef(new Animated.Value(0)).current;
+  const floatAnim = useRef(new Animated.Value(0)).current;
+  const shimmerAnim = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
     // Start animations
@@ -31,13 +35,18 @@ export default function LoadingScreen() {
         friction: 7,
         useNativeDriver: true,
       }),
+      Animated.timing(slideUpAnim, {
+        toValue: 0,
+        duration: 800,
+        useNativeDriver: true,
+      }),
     ]).start();
 
     // Continuous rotation
     Animated.loop(
       Animated.timing(rotateAnim, {
         toValue: 1,
-        duration: 3000,
+        duration: 4000,
         useNativeDriver: true,
       })
     ).start();
@@ -57,11 +66,53 @@ export default function LoadingScreen() {
         }),
       ])
     ).start();
+
+    // Progress bar animation
+    Animated.timing(progressAnim, {
+      toValue: 1,
+      duration: 3000,
+      useNativeDriver: false,
+    }).start();
+
+    // Floating animation for features
+    Animated.loop(
+      Animated.sequence([
+        Animated.timing(floatAnim, {
+          toValue: 1,
+          duration: 2000,
+          useNativeDriver: true,
+        }),
+        Animated.timing(floatAnim, {
+          toValue: 0,
+          duration: 2000,
+          useNativeDriver: true,
+        }),
+      ])
+    ).start();
+
+    // Shimmer effect for text
+    Animated.loop(
+      Animated.timing(shimmerAnim, {
+        toValue: 1,
+        duration: 1500,
+        useNativeDriver: true,
+      })
+    ).start();
   }, []);
 
   const spin = rotateAnim.interpolate({
     inputRange: [0, 1],
     outputRange: ['0deg', '360deg'],
+  });
+
+  const floatTranslate = floatAnim.interpolate({
+    inputRange: [0, 1],
+    outputRange: [0, -10],
+  });
+
+  const shimmerOpacity = shimmerAnim.interpolate({
+    inputRange: [0, 0.5, 1],
+    outputRange: [0.7, 1, 0.7],
   });
 
   return (
@@ -73,7 +124,7 @@ export default function LoadingScreen() {
         styles.content,
         {
           opacity: fadeAnim,
-          transform: [{ scale: scaleAnim }],
+          transform: [{ scale: scaleAnim }, { translateY: slideUpAnim }],
         }
       ]}>
         {/* Logo/Icon */}
@@ -87,6 +138,7 @@ export default function LoadingScreen() {
           }
         ]}>
           <View style={styles.logoBackground}>
+            <View style={styles.logoGlow} />
             <BookOpen size={48} color="#FFFFFF" />
           </View>
         </Animated.View>
@@ -94,7 +146,12 @@ export default function LoadingScreen() {
         {/* App Name */}
         <Animated.Text style={[
           styles.appName,
-          { opacity: fadeAnim }
+          { 
+            opacity: Animated.multiply(fadeAnim, shimmerAnim.interpolate({
+              inputRange: [0, 0.5, 1],
+              outputRange: [0.8, 1, 0.8],
+            }))
+          }
         ]}>
           Quran Focus
         </Animated.Text>
@@ -102,7 +159,10 @@ export default function LoadingScreen() {
         {/* Tagline */}
         <Animated.Text style={[
           styles.tagline,
-          { opacity: fadeAnim }
+          { 
+            opacity: fadeAnim,
+            transform: [{ translateY: slideUpAnim }]
+          }
         ]}>
           Focus with Faith
         </Animated.Text>
@@ -110,43 +170,140 @@ export default function LoadingScreen() {
         {/* Feature Icons */}
         <Animated.View style={[
           styles.featuresContainer,
-          { opacity: fadeAnim }
+          { 
+            opacity: fadeAnim,
+            transform: [{ translateY: floatTranslate }]
+          }
         ]}>
-          <View style={styles.featureItem}>
+          <Animated.View style={[
+            styles.featureItem,
+            { transform: [{ translateY: floatAnim.interpolate({
+              inputRange: [0, 1],
+              outputRange: [0, -5],
+            }) }] }
+          ]}>
             <Clock size={24} color="rgba(255,255,255,0.8)" />
             <Text style={styles.featureText}>Pomodoro Timer</Text>
-          </View>
-          <View style={styles.featureItem}>
+          </Animated.View>
+          <Animated.View style={[
+            styles.featureItem,
+            { transform: [{ translateY: floatAnim.interpolate({
+              inputRange: [0, 1],
+              outputRange: [0, -8],
+            }) }] }
+          ]}>
             <BookOpen size={24} color="rgba(255,255,255,0.8)" />
             <Text style={styles.featureText}>Quran Recitation</Text>
-          </View>
-          <View style={styles.featureItem}>
+          </Animated.View>
+          <Animated.View style={[
+            styles.featureItem,
+            { transform: [{ translateY: floatAnim.interpolate({
+              inputRange: [0, 1],
+              outputRange: [0, -6],
+            }) }] }
+          ]}>
             <Heart size={24} color="rgba(255,255,255,0.8)" />
             <Text style={styles.featureText}>Spiritual Growth</Text>
-          </View>
+          </Animated.View>
         </Animated.View>
 
         {/* Loading Indicator */}
         <Animated.View style={[
           styles.loadingContainer,
-          { opacity: fadeAnim }
+          { 
+            opacity: fadeAnim,
+            transform: [{ translateY: slideUpAnim }]
+          }
         ]}>
           <View style={styles.loadingBar}>
             <Animated.View style={[
               styles.loadingFill,
               {
-                transform: [{ scaleX: pulseAnim }],
+                width: progressAnim.interpolate({
+                  inputRange: [0, 1],
+                  outputRange: ['0%', '100%'],
+                }),
+              }
+            ]} />
+            <Animated.View style={[
+              styles.loadingShimmer,
+              {
+                opacity: shimmerOpacity,
+                transform: [{
+                  translateX: shimmerAnim.interpolate({
+                    inputRange: [0, 1],
+                    outputRange: [-200, 200],
+                  })
+                }]
               }
             ]} />
           </View>
-          <Text style={styles.loadingText}>Preparing your spiritual journey...</Text>
+          <Animated.Text style={[
+            styles.loadingText,
+            { opacity: shimmerOpacity }
+          ]}>
+            Preparing your spiritual journey...
+          </Animated.Text>
         </Animated.View>
       </Animated.View>
 
       {/* Islamic Pattern Overlay */}
-      <View style={styles.patternOverlay}>
+      <Animated.View style={[
+        styles.patternOverlay,
+        { 
+          opacity: fadeAnim,
+          transform: [{ translateY: slideUpAnim }]
+        }
+      ]}>
         <Text style={styles.arabicText}>بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ</Text>
-      </View>
+      </Animated.View>
+
+      {/* Floating Particles */}
+      <Animated.View style={[
+        styles.particle,
+        styles.particle1,
+        {
+          opacity: fadeAnim,
+          transform: [
+            { translateY: floatAnim.interpolate({
+              inputRange: [0, 1],
+              outputRange: [0, -20],
+            }) },
+            { rotate: spin }
+          ]
+        }
+      ]} />
+      <Animated.View style={[
+        styles.particle,
+        styles.particle2,
+        {
+          opacity: fadeAnim,
+          transform: [
+            { translateY: floatAnim.interpolate({
+              inputRange: [0, 1],
+              outputRange: [0, -15],
+            }) },
+            { rotate: rotateAnim.interpolate({
+              inputRange: [0, 1],
+              outputRange: ['0deg', '-360deg'],
+            }) }
+          ]
+        }
+      ]} />
+      <Animated.View style={[
+        styles.particle,
+        styles.particle3,
+        {
+          opacity: fadeAnim,
+          transform: [
+            { translateY: floatAnim.interpolate({
+              inputRange: [0, 1],
+              outputRange: [0, -25],
+            }) },
+            { rotate: spin }
+          ]
+        }
+      ]} />
     </LinearGradient>
   );
 }
@@ -163,6 +320,7 @@ const styles = StyleSheet.create({
   },
   logoContainer: {
     marginBottom: 30,
+    position: 'relative',
   },
   logoBackground: {
     width: 120,
@@ -173,6 +331,17 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderWidth: 2,
     borderColor: 'rgba(255,255,255,0.2)',
+    position: 'relative',
+    overflow: 'hidden',
+  },
+  logoGlow: {
+    position: 'absolute',
+    width: 140,
+    height: 140,
+    borderRadius: 70,
+    backgroundColor: 'rgba(255,255,255,0.05)',
+    top: -10,
+    left: -10,
   },
   appName: {
     fontSize: 36,
@@ -217,12 +386,23 @@ const styles = StyleSheet.create({
     borderRadius: 2,
     overflow: 'hidden',
     marginBottom: 16,
+    position: 'relative',
   },
   loadingFill: {
     height: '100%',
     backgroundColor: '#FFFFFF',
     borderRadius: 2,
-    width: '70%',
+    position: 'absolute',
+    left: 0,
+    top: 0,
+  },
+  loadingShimmer: {
+    position: 'absolute',
+    top: 0,
+    width: 50,
+    height: '100%',
+    backgroundColor: 'rgba(255,255,255,0.3)',
+    borderRadius: 2,
   },
   loadingText: {
     fontSize: 14,
@@ -241,5 +421,30 @@ const styles = StyleSheet.create({
     color: 'rgba(255,255,255,0.6)',
     textAlign: 'center',
     fontFamily: 'System',
+  },
+  particle: {
+    position: 'absolute',
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: 'rgba(255,255,255,0.3)',
+  },
+  particle1: {
+    top: '20%',
+    left: '15%',
+  },
+  particle2: {
+    top: '30%',
+    right: '20%',
+    width: 6,
+    height: 6,
+    borderRadius: 3,
+  },
+  particle3: {
+    bottom: '25%',
+    left: '25%',
+    width: 10,
+    height: 10,
+    borderRadius: 5,
   },
 });
