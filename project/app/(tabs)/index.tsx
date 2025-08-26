@@ -68,10 +68,10 @@ const BACKGROUND_OPTIONS: BackgroundOption[] = [
   { key: 'none', label: 'No Background', icon: Zap, video: undefined, preview: '🚫' },
   { key: 'waves', label: 'Ocean Waves', icon: Zap, video: 'Waves.mp4', preview: '🌊' },
   { key: 'rain', label: 'Gentle Rain', icon: Zap, video: 'Rain.mp4', preview: '🌧️' },
-  { key: 'rain2', label: 'Heavy Rain', icon: Zap, video: 'Rain 2.mp4', preview: '⛈️' },
+  { key: 'rain2', label: 'Heavy Rain', icon: Zap, video: 'Rain-2.mp4', preview: '⛈️' },
   { key: 'clouds', label: 'Moving Clouds', icon: Zap, video: 'Clouds.mp4', preview: '☁️' },
-  { key: 'clouds2', label: 'Clouds 2', icon: Zap, video: 'Clouds 2.mp4', preview: '🌤️' },
-  { key: 'clouds3', label: 'Clouds 3', icon: Zap, video: 'Clouds 3.mp4', preview: '⛅' },
+  { key: 'clouds2', label: 'Clouds 2', icon: Zap, video: 'Clouds-2.mp4', preview: '🌤️' },
+  { key: 'clouds3', label: 'Clouds 3', icon: Zap, video: 'Clouds-3.mp4', preview: '⛅' },
   { key: 'wind', label: 'Abstract Wind', icon: Zap, video: 'Wind.mp4', preview: '💨' },
 ];
 
@@ -392,14 +392,14 @@ export default function TimerScreen() {
           return require('@/assets/video/Waves.mp4');
         case 'Rain.mp4':
           return require('@/assets/video/Rain.mp4');
-        case 'Rain 2.mp4':
-          return require('@/assets/video/Rain 2.mp4');
+        case 'Rain-2.mp4':
+          return require('@/assets/video/Rain-2.mp4');
         case 'Clouds.mp4':
           return require('@/assets/video/Clouds.mp4');
-        case 'Clouds 2.mp4':
-          return require('@/assets/video/Clouds 2.mp4');
-        case 'Clouds 3.mp4':
-          return require('@/assets/video/Clouds 3.mp4');
+        case 'Clouds-2.mp4':
+          return require('@/assets/video/Clouds-2.mp4');
+        case 'Clouds-3.mp4':
+          return require('@/assets/video/Clouds-3.mp4');
         case 'Wind.mp4':
           return require('@/assets/video/Wind.mp4');
         default:
