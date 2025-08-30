@@ -42,6 +42,7 @@ function RootLayoutNav() {
 }
 
 export default function RootLayout() {
+  useFrameworkReady();
   return (
     <ThemeProvider>
       <SessionProvider>
