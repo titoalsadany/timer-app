@@ -19,9 +19,8 @@ export function useSafeAsset(assetModule: number | null): AssetLoadResult {
       return;
     }
 
-    // For now, just return loaded state without actual asset loading
-    // This prevents Metro bundler issues with unsupported file types
-    setResult({ loaded: true, error: null, asset: null });
+    // Return the actual asset module to prevent native crashes
+    setResult({ loaded: true, error: null, asset: assetModule });
   }, [assetModule]);
 
   return result;
